@@ -1,5 +1,5 @@
 # SQL Challenge
-This repository contains solutions for #8WeekSQLChallenge, which can be found here: [**SQL challenge**](https://8weeksqlchallenge.com/).
+This repository contains solutions for **#8WeekSQLChallenge**, which can be found here: [**SQL challenge**](https://8weeksqlchallenge.com/).
 <br>Individual challenges present a diverse set of case studies, allowing us to develop, practice, and refine our SQL skills across various real-world scenarios.
 <br>
 <br>Throughout this SQL challenge, I worked extensively with **MySQL Workbench**, leveraging different SQL techniques to analyze and manipulate data efficiently. The case studies provided opportunities to explore complex queries, optimize performance, and improve data structuring.
