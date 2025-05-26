@@ -81,13 +81,13 @@ SELECT
 	customer_id,
     SUM(price) as total
 FROM sales s
-JOIN menu m
+INNER JOIN menu m
     ON m.product_id = s.product_id
 GROUP BY customer_id;
 ````
 
 #### Explanation:
-- With **JOIN** we merged two tables.
+- With **INNER JOIN** we merged two tables. (Althought **JOIN** is functionally equivalent to **INNER JOIN**, we use the longer form for better readability and clearity.)
 - With the **SUM** function we calculated the total price paid by each customer.
 - Using **GROUP BY** aggregated results by customers. 
 
@@ -142,7 +142,7 @@ WITH cte_orders AS (
 		ROW_NUMBER() OVER (PARTITION BY customer_id 
 			ORDER BY order_date) AS rank_num
 	FROM sales s
-	JOIN menu m
+	INNER JOIN menu m
 		ON m.product_id = s.product_id
 )
 
@@ -178,7 +178,7 @@ SELECT
 	product_name AS most_purchased_item,
 	COUNT(s.product_id) AS purchased_volume
 FROM sales s
-JOIN menu m
+INNER JOIN menu m
 	ON s.product_id = m.product_id
 GROUP BY m.product_name
 ORDER BY purchased_volume DESC
@@ -210,7 +210,7 @@ WITH cte_popular_item AS (
 		DENSE_RANK() OVER (PARTITION BY customer_id 
 			ORDER BY COUNT(s.product_id) DESC) AS rank_num
 	FROM sales s
-	JOIN menu m
+	INNER JOIN menu m
 		ON m.product_id = s.product_id
 	GROUP BY
 		customer_id,
@@ -257,7 +257,7 @@ WITH cte_becoming_member AS (
 		ROW_NUMBER() OVER (PARTITION BY s.customer_id
 			ORDER BY order_date) as rank_num
 	FROM sales s
-	JOIN members m
+	INNER JOIN members m
 		ON m.customer_id = s.customer_id
 		AND order_date >= join_date
 )
@@ -268,7 +268,7 @@ SELECT
 	order_date,
     join_date
 FROM cte_becoming_member bm
-JOIN menu m
+INNER JOIN menu m
 	ON m.product_id = bm.product_id
 	AND rank_num = 1
 ORDER BY customer_id ASC;
@@ -276,7 +276,7 @@ ORDER BY customer_id ASC;
 
 #### Explanation:
 - With the CTE named `cte_becoming_member`, we selected relevant columns and applied the **ROW_NUMBER** window function to assign a unique rank to each customer. With the **PARTITION BY** clause, we grouped the data by customer, and order it chronologically by date with **ORDER BY** clause.
-- Applying **JOIN**, we combined the members and sales tables. Additionally, we applied a **WHERE** clause to ensure that only sales occurring on or after the date a customer became a member are included.
+- Applying **INNER JOIN**, we combined the members and sales tables. Additionally, we applied a **WHERE** clause to ensure that only sales occurring on or after the date a customer became a member are included.
 - In the following query, we merged the CTE with the menu table, where we applied a filter so that only the first recorded transaction for each customer was retrieved.
 - Using **ORDER BY**, we ordered the final output by customer in ascending order.
 
@@ -303,7 +303,7 @@ WITH cte_before_being_member AS (
 		ROW_NUMBER() OVER (PARTITION BY s.customer_id
 			ORDER BY order_date DESC) AS rank_num
 	FROM sales s
-	JOIN members m
+	INNER JOIN members m
 		ON m.customer_id = s.customer_id
 		AND order_date < join_date
 )
@@ -314,7 +314,7 @@ SELECT
 	order_date, 
 	join_date
 FROM cte_before_being_member bbm
-JOIN menu m
+INNER JOIN menu m
 	ON m.product_id = bbm.product_id
 	AND rank_num = 1
 ORDER BY customer_id ASC;
@@ -322,8 +322,8 @@ ORDER BY customer_id ASC;
 
 #### Explanation:
 - With the CTE named `cte_before_being_member`, we selected our columns and calculate the rank with the **ROW_NUMBER()** window function. The rank is determined based on the order dates in descending order.
-- With **JOIN** we merged sales and members tables, only including sales that were made before the customer became a member.
-- In the following querry we used **JOIN** to merge our CTE with the menu table, using a filter to include only the rows where the rank number is 1.
+- With **INNER JOIN** we merged sales and members tables, only including sales that were made before the customer became a member.
+- In the following querry we used **INNER JOIN** to merge our CTE with the menu table, using a filter to include only the rows where the rank number is 1.
 - Using **ORDER BY** we ordered the list by customer in ascending order.
 
 #### Answer:
@@ -344,17 +344,17 @@ SELECT
 	COUNT(s.product_id) AS total_items,
 	SUM(m.price) AS amount_spent
 FROM sales s
-JOIN members mb
+INNER JOIN members mb
 	ON mb.customer_id = s.customer_id
 	AND mb.join_date > s.order_date
-JOIN menu m
+INNER JOIN menu m
 	ON m.product_id = s.product_id
 GROUP BY s.customer_id;
 ```
 
 #### Explanation:
 - We calculated the **SUM** of the prices for all the items bought (using **COUNT** method) for each customer, that became a member later on.
-- We used **JOIN** statement to merge sales and members tables, where the order date is prior to becoming a member. And we also added the menu table.
+- We used **INNER JOIN** statement to merge sales and members tables, where the order date is prior to becoming a member. And we also added the menu table.
 - Using **GROUP BY** we aggregated results by customers.
 
 #### Answer:
@@ -378,7 +378,7 @@ SELECT
 		ELSE price*10 
 	END) AS total_points
 FROM sales s
-JOIN menu m
+INNER JOIN menu m
 	ON m.product_id = s.product_id
 GROUP BY customer_id;
 ```
@@ -386,7 +386,7 @@ GROUP BY customer_id;
 #### Explanation:
 - We calculated the **SUM** of the points for all the products.
 - A **CASE** statment was used to give 10 or 2O points for different products.
-- We used **JOIN** statement to merge sales and menu tables, so we could define what was bought by each customer.
+- We used **INNER JOIN** statement to merge sales and menu tables, so we could define what was bought by each customer.
 - Using **GROUP BY** we aggregated results by customers.
 
 #### Answer:
