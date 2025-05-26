@@ -87,7 +87,7 @@ GROUP BY customer_id;
 ````
 
 #### Explanation:
-- With **INNER JOIN** we merged two tables. (Althought **JOIN** is functionally equivalent to **INNER JOIN**, we use the longer form for better readability and clearity.)
+- With **INNER JOIN** we merged two tables. (Althought **JOIN** is functionally equivalent to **INNER JOIN**, the latter form is used for better readability and clearity.)
 - With the **SUM** function we calculated the total price paid by each customer.
 - Using **GROUP BY** aggregated results by customers. 
 
