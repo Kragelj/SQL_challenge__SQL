@@ -272,9 +272,9 @@ SELECT
 	p.pizza_name, 
 	COUNT(c.pizza_id) AS delivered_pizza
 FROM customer_orders c
-JOIN runner_orders r
+INNER JOIN runner_orders r
 	ON c.order_id = r.order_id
-JOIN pizza_names p
+INNER JOIN pizza_names p
 	ON c.pizza_id = p.pizza_id
 WHERE cancellation IS NULL
 GROUP BY p.pizza_name;
@@ -282,7 +282,7 @@ GROUP BY p.pizza_name;
 
 #### Explanation:
 - With the **COUNT** aggregation function, we calculated the total number of delivered pizzas.
-- Using **JOIN**, we combined data from customer_orders, runner_orders, and pizza_names tables to match pizzas with their deliveries.
+- Using **INNER JOIN**, we combined data from customer_orders, runner_orders, and pizza_names tables to match pizzas with their deliveries.
 - Applying the **WHERE** clause ensured only non-canceled orders were considered.
 
 #### Answer:
@@ -304,7 +304,7 @@ SELECT
 	p.pizza_name, 
 	COUNT(p.pizza_name) AS order_count
 FROM customer_orders c
-JOIN pizza_names p
+INNER JOIN pizza_names p
 	ON c.pizza_id= p.pizza_id
 GROUP BY c.customer_id, p.pizza_name
 ORDER BY c.customer_id;
@@ -312,7 +312,7 @@ ORDER BY c.customer_id;
 
 #### Explanation:
 - With the **COUNT** aggregation function, we calculated the total orders for each pizza type per customer.
-- Using **JOIN**, we linked customer_orders with pizza_names to retrieve pizza names.
+- Using **INNER JOIN**, we linked customer_orders with pizza_names to retrieve pizza names.
 - Applying **GROUP BY**, we grouped the data by customer_id and pizza_name to show individual order counts.
 - Using **ORDER BY**, we sorted the results by customer ID for easier reference. Let me know if you need further refinements!
 
@@ -343,7 +343,7 @@ SELECT
 	c.order_id,
 	COUNT(pizza_id) AS max_pizzas
 FROM customer_orders c
-JOIN runner_orders r
+INNER JOIN runner_orders r
 	ON c.order_id = r.order_id
 	AND r.cancellation IS NULL
 GROUP BY c.order_id
@@ -353,7 +353,7 @@ LIMIT 1;
 
 #### Explanation:
 - With the **COUNT** aggregation function, we calculated the total number of pizzas in each order.
-- Using **JOIN**, we linked customer_orders with runner_orders tables to filter out canceled orders.
+- Using **INNER JOIN**, we linked customer_orders with runner_orders tables to filter out canceled orders.
 - Applying **GROUP BY**, we aggregated data by order_id to determine the number of pizzas per order.
 - With using **ORDER BY** in descending order, we identified the order with the highest pizza count, and with **LIMIT** clause we displayed only the top result.
 
@@ -384,7 +384,7 @@ SELECT
 		ELSE 0
 	END) AS no_changes
 FROM customer_orders c
-JOIN runner_orders r
+INNER JOIN runner_orders r
 	ON c.order_id = r.order_id
 WHERE r.cancellation IS NULL
 GROUP BY c.customer_id;
@@ -393,7 +393,7 @@ GROUP BY c.customer_id;
 #### Explanation:
 - With the **SUM** function, followed with **CASE**, we counted delivered pizzas based on specific criteria, where at least one change (exclusions or extras) was made.
 - Another **SUM(CASE ...)** function counted pizzas with no changes, ensuring both conditions were tracked separately.
-- Using **JOIN**, we combined customer_orders with runner_orders table to exclude canceled orders.
+- Using **INNER JOIN**, we combined customer_orders with runner_orders table to exclude canceled orders.
 - Applying **WHERE**, we filtered out canceled deliveries, keeping only successful ones.
 - Using **GROUP BY**, we grouped the results by customer_id to display individual customer modifications.
 
@@ -421,7 +421,7 @@ SELECT
 	customer_id,
 	COUNT(pizza_id) AS changed_order
 FROM customer_orders c
-JOIN runner_orders r
+INNER JOIN runner_orders r
 	ON c.order_id = r.order_id
 WHERE r.cancellation IS NULL
 	AND c.exclusions IS NOT NULL
@@ -431,7 +431,7 @@ GROUP BY customer_id;
 
 #### Explanation:
 - With **COUNT**, we calculated the number of pizzas that had both exclusions and extras.
-- Using **JOIN**, we connected customer_orders and runner_orders tables to track delivered pizzas.
+- Using **INNER JOIN**, we connected customer_orders and runner_orders tables to track delivered pizzas.
 - Applying **WHERE**, we filtered out canceled orders and ensured only pizzas with both modifications were included.
 
 #### Answer:
@@ -548,7 +548,7 @@ SELECT
     runner_id,
     ROUND(AVG(TIMESTAMPDIFF(MINUTE, c.order_time, pickup_time))) AS avg_time_min
 FROM runner_orders r
-JOIN customer_orders c
+INNER JOIN customer_orders c
 	ON c.order_id = r.order_id
 GROUP BY runner_id;
 ````
@@ -556,7 +556,7 @@ GROUP BY runner_id;
 #### Explanation:
 - With the **TIMESTAMPDIFF** function, we calculated the time difference in minutes between the order time and the pick up time.
 - We used the **AVG** aggreggation function to determine the average time it took for each runner to arrive, combined with the **ROUND** function, to round the result to the nearest whole number.
-- Using **JOIN**, we linked customer_orders with runner_orders table to correlate order placement times with pickup times.
+- Using **INNER JOIN**, we linked customer_orders with runner_orders table to correlate order placement times with pickup times.
 - Applying **GROUP BY**, we grouped results by runner_id to calculate individual performance for each runner.
 
 #### Answer:
@@ -584,7 +584,7 @@ WITH cte_preparation AS (
 		TIMESTAMPDIFF(MINUTE, c.order_time, r.pickup_time) AS prep_time_min,
         TIMESTAMPDIFF(MINUTE, c.order_time, r.pickup_time) / COUNT(c.pizza_id) AS time_per_pizza
 	FROM customer_orders c
-	JOIN runner_orders r
+	INNER JOIN runner_orders r
 		ON c.order_id = r.order_id
 	WHERE r.distance IS NOT NULL
 	GROUP BY c.order_id, c.order_time, r.pickup_time
@@ -628,14 +628,14 @@ SELECT
 	c.customer_id,
 	ROUND(AVG(distance)) AS avg_distance
 FROM runner_orders r
-JOIN customer_orders c
+INNER JOIN customer_orders c
 	ON c.order_id = r.order_id
 GROUP BY c.customer_id;
 ````
 
 #### Explanation:
 - Using the **AVG** function, we calculated the average distance traveled by runners for each customer’s order. Applying ROUND, we rounded the values to make the results more readable.
-- With the **JOIN** statement, we linked runner_orders with customer_orders table to associate travel distances with customer IDs.
+- With the **INNER JOIN** statement, we linked runner_orders with customer_orders table to associate travel distances with customer IDs.
 - Using **GROUP BY**, we grouped the results by customer_id, ensuring individual calculations for each customer.
 
 #### Answer:
