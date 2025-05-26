@@ -177,8 +177,8 @@ First order of Customer A is sushi.
 SELECT 
 	product_name AS most_purchased_item,
 	COUNT(s.product_id) AS purchased_volume
-FROM sales s
-INNER JOIN menu m
+FROM menu m
+LEFT JOIN sales s
 	ON s.product_id = m.product_id
 GROUP BY m.product_name
 ORDER BY purchased_volume DESC
@@ -187,6 +187,7 @@ LIMIT 1;
 
 #### Explanation:
 - Using the **COUNT** aggregation function, we calculated the total quantity of purchased items, providing a clear measure of sales volume.
+- With **LEFT JOIN**, we started with the menu table to connect the sales with all the items on the menu (there could also be items that weren't ordered at all).
 - With **ORDER BY** in descending order, we prioritized the most frequently purchased items, ensuring they appear at the top of the list.
 - Applying the **LIMIT** clause, we narrowed the results to display only the highest-ranking purchased items, focusing on top selections efficiently.
 
