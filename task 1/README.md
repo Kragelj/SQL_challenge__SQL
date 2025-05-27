@@ -78,7 +78,7 @@ VALUES
 
 ````sql
 SELECT
-	customer_id,
+    customer_id,
     SUM(price) as total
 FROM sales s
 INNER JOIN menu m
@@ -108,8 +108,8 @@ Customer A spent $76.
 
 ````sql
 SELECT
-	customer_id,
-	COUNT(DISTINCT order_date) as visits
+    customer_id,
+    COUNT(DISTINCT order_date) as visits
 FROM sales 
 GROUP BY customer_id;
 ````
@@ -135,20 +135,20 @@ Customer A visited 4 times.
 
 ````sql
 WITH cte_orders AS (
-	SELECT
-		customer_id,
-		order_date,
-		product_name,
-		ROW_NUMBER() OVER (PARTITION BY customer_id 
-			ORDER BY order_date) AS rank_num
-	FROM sales s
-	INNER JOIN menu m
-		ON m.product_id = s.product_id
+    SELECT
+	customer_id,
+	order_date,
+	product_name,
+	ROW_NUMBER() OVER (PARTITION BY customer_id 
+	    ORDER BY order_date) AS rank_num
+    FROM sales s
+    INNER JOIN menu m
+	ON m.product_id = s.product_id
 )
 
 SELECT 
-	customer_id,
-	product_name
+    customer_id,
+    product_name
 FROM cte_orders
 WHERE rank_num = 1;
 ````
@@ -175,11 +175,11 @@ First order of Customer A is sushi.
 
 ````sql
 SELECT 
-	product_name AS most_purchased_item,
-	COUNT(s.product_id) AS purchased_volume
+    product_name AS most_purchased_item,
+    COUNT(s.product_id) AS purchased_volume
 FROM menu m
 LEFT JOIN sales s
-	ON s.product_id = m.product_id
+    ON s.product_id = m.product_id
 GROUP BY m.product_name
 ORDER BY purchased_volume DESC
 LIMIT 1;
@@ -204,24 +204,24 @@ Most purchased item on the menu is ramen with 8 purchases.
 
 ````sql
 WITH cte_popular_item AS (
-	SELECT
-		customer_id,
-		product_name,
-		COUNT(s.product_id) AS ordered,
-		DENSE_RANK() OVER (PARTITION BY customer_id 
-			ORDER BY COUNT(s.product_id) DESC) AS rank_num
-	FROM sales s
-	INNER JOIN menu m
-		ON m.product_id = s.product_id
-	GROUP BY
-		customer_id,
-		product_name
+    SELECT
+	customer_id,
+	product_name,
+	COUNT(s.product_id) AS ordered,
+	DENSE_RANK() OVER (PARTITION BY customer_id 
+	    ORDER BY COUNT(s.product_id) DESC) AS rank_num
+    FROM sales s
+    INNER JOIN menu m
+	ON m.product_id = s.product_id
+    GROUP BY
+	customer_id,
+	product_name
 )
 
 SELECT 
-	customer_id,
-	product_name,
-	ordered
+    customer_id,
+    product_name,
+    ordered
 FROM cte_popular_item
 WHERE rank_num = 1;
 ````
@@ -250,28 +250,28 @@ Most popular item of Customer A is ramen.
 
 ```sql
 WITH cte_becoming_member AS (
-	SELECT
-		s.customer_id,
-		order_date,
+    SELECT
+	s.customer_id,
+	order_date,
         join_date,
-		product_id,
-		ROW_NUMBER() OVER (PARTITION BY s.customer_id
-			ORDER BY order_date) as rank_num
-	FROM sales s
-	INNER JOIN members m
-		ON m.customer_id = s.customer_id
-		AND order_date >= join_date
+	product_id,
+	ROW_NUMBER() OVER (PARTITION BY s.customer_id
+	    ORDER BY order_date) as rank_num
+    FROM sales s
+    INNER JOIN members m
+	ON m.customer_id = s.customer_id
+	AND order_date >= join_date
 )
 
 SELECT 
-	customer_id,
-	product_name,
-	order_date,
+    customer_id,
+    product_name,
+    order_date,
     join_date
 FROM cte_becoming_member bm
 INNER JOIN menu m
-	ON m.product_id = bm.product_id
-	AND rank_num = 1
+    ON m.product_id = bm.product_id
+    AND rank_num = 1
 ORDER BY customer_id ASC;
 ```
 
@@ -296,28 +296,28 @@ Customer A became a member on 2021-01-07 and his first order was curry.
 
 ````sql
 WITH cte_before_being_member AS (
-	SELECT
-		s.customer_id,
+    SELECT
+	s.customer_id,
         product_id,
-		order_date,
-		join_date,
-		ROW_NUMBER() OVER (PARTITION BY s.customer_id
-			ORDER BY order_date DESC) AS rank_num
-	FROM sales s
-	INNER JOIN members m
-		ON m.customer_id = s.customer_id
-		AND order_date < join_date
+	order_date,
+	join_date,
+	ROW_NUMBER() OVER (PARTITION BY s.customer_id
+	    ORDER BY order_date DESC) AS rank_num
+    FROM sales s
+    INNER JOIN members m
+	ON m.customer_id = s.customer_id
+	AND order_date < join_date
 )
 
 SELECT 
-	customer_id,
-	product_name,
-	order_date, 
-	join_date
+    customer_id,
+    product_name,
+    order_date, 
+    join_date
 FROM cte_before_being_member bbm
 INNER JOIN menu m
-	ON m.product_id = bbm.product_id
-	AND rank_num = 1
+    ON m.product_id = bbm.product_id
+    AND rank_num = 1
 ORDER BY customer_id ASC;
 ````
 
@@ -341,15 +341,15 @@ Customers A and B both ordered sushi before becoming members.
 
 ```sql
 SELECT
-	s.customer_id,
-	COUNT(s.product_id) AS total_items,
-	SUM(m.price) AS amount_spent
+    s.customer_id,
+    COUNT(s.product_id) AS total_items,
+    SUM(m.price) AS amount_spent
 FROM sales s
 INNER JOIN members mb
-	ON mb.customer_id = s.customer_id
-	AND mb.join_date > s.order_date
+    ON mb.customer_id = s.customer_id
+    AND mb.join_date > s.order_date
 INNER JOIN menu m
-	ON m.product_id = s.product_id
+    ON m.product_id = s.product_id
 GROUP BY s.customer_id;
 ```
 
@@ -373,14 +373,14 @@ Customer A spent $25 on 2 items before becoming a member.
 
 ```sql
 SELECT
-	customer_id,
-	SUM(CASE
-		WHEN s.product_id = 1 THEN price*20
-		ELSE price*10 
+    customer_id,
+    SUM(CASE
+	    WHEN s.product_id = 1 THEN price*20
+	    ELSE price*10 
 	END) AS total_points
 FROM sales s
 INNER JOIN menu m
-	ON m.product_id = s.product_id
+    ON m.product_id = s.product_id
 GROUP BY customer_id;
 ```
 
