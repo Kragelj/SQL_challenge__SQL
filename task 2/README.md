@@ -150,17 +150,17 @@ DESCRIBE customer_orders;
 -- Cleaning the table
 UPDATE customer_orders
 SET exclusions =
-    CASE
-	WHEN exclusions = 'null' OR exclusions = ''
-        THEN NULL
-        ELSE exclusions
-    END,
+    	CASE
+	    WHEN exclusions = 'null' OR exclusions = ''
+            THEN NULL
+            ELSE exclusions
+        END,
     extras =
-    CASE
-	WHEN extras = 'null' OR extras = ''
-        THEN NULL
-        ELSE extras
-    END;
+        CASE
+	    WHEN extras = 'null' OR extras = ''
+            THEN NULL
+            ELSE extras
+        END;
 
 
 -- B. runner_orders table
@@ -172,25 +172,25 @@ DESCRIBE runner_orders;
 -- Cleaning the table
 UPDATE runner_orders
 SET pickup_time =
-    CASE
-	WHEN pickup_time = 'null' OR pickup_time = '' THEN NULL
-        ELSE pickup_time
-    END,    
-distance =
-    CASE
-	WHEN distance = 'null' OR distance = '' THEN NULL
-	ELSE REPLACE(distance, 'km', '')
-    END,    
-duration =
-    CASE
-	WHEN duration = 'null' OR duration = '' THEN NULL
-	ELSE REPLACE(REPLACE(REPLACE(duration, 'minutes', ''), 'minute', ''), 'mins', '')
-    END,
-cancellation =
-    CASE
-	WHEN cancellation = 'null' OR cancellation = '' THEN NULL
-        ELSE cancellation
-    END;
+        CASE
+	    WHEN pickup_time = 'null' OR pickup_time = '' THEN NULL
+            ELSE pickup_time
+        END,    
+    distance =
+        CASE
+	    WHEN distance = 'null' OR distance = '' THEN NULL
+	    ELSE REPLACE(distance, 'km', '')
+        END,    
+    duration =
+        CASE
+	    WHEN duration = 'null' OR duration = '' THEN NULL
+	    ELSE REPLACE(REPLACE(REPLACE(duration, 'minutes', ''), 'minute', ''), 'mins', '')
+        END,
+    cancellation =
+        CASE
+	    WHEN cancellation = 'null' OR cancellation = '' THEN NULL
+            ELSE cancellation
+        END;
 ````
 
 
@@ -371,7 +371,7 @@ SELECT
     c.customer_id,
     SUM(CASE
 	    WHEN c.exclusions IS NOT NULL
-	    OR c.extras IS NOT NULL
+	        OR c.extras IS NOT NULL
             THEN 1
 	    ELSE 0
 	END) AS changes_made,
